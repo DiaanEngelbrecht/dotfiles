@@ -141,12 +141,6 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-
-
-export CMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk
-export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
-
 get-ubuntu-ami() {
   local ARCH=${1:-x86} # Default to x86 if not specified
   local AWS_ARCH="amd64"
