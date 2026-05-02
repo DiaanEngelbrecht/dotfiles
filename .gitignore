@@ -1,0 +1,7 @@
+# Local overrides — secrets and machine-specific config
+.zshrc.local
+.zshenv.local
+*.local
+
+# macOS noise
+.DS_Store

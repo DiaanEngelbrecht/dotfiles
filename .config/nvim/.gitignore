@@ -1,0 +1,6 @@
+.DS_Store
+plugin/packer_compiled.lua
+
+# Personal spell-check additions (may contain identifying terms)
+spell/*.add
+spell/*.spl
