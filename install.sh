@@ -6,6 +6,38 @@ set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Prerequisites — required by .zshrc / .tmux.conf. Idempotent.
+# ──────────────────────────────────────────────────────────────────────────────
+
+install_prereqs() {
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "installing oh-my-zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+  fi
+
+  local p10k_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+  if [ ! -d "$p10k_dir" ]; then
+    echo "installing powerlevel10k..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
+  fi
+
+  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    echo "installing tmux plugin manager (TPM)..."
+    git clone --depth=1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+  fi
+
+  if [ ! -f "$HOME/.asdf/asdf.sh" ]; then
+    echo "note: asdf not installed (optional). To install: brew install asdf"
+  fi
+}
+
+install_prereqs
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Symlink tracked dotfiles into $HOME.
+# ──────────────────────────────────────────────────────────────────────────────
+
 link() {
   local rel="$1"
   local src="$DOTFILES/$rel"
