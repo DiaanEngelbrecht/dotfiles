@@ -1,0 +1,6 @@
+vim.keymap.set("n", "<C-c><C-c>", "<cmd>:wq<cr>", {buffer = 0})
+vim.keymap.set("n", "e", "ciwedit<Esc>", {buffer = 0})
+vim.keymap.set("n", "s", "ciwsquash<Esc>", {buffer = 0})
+vim.keymap.set("n", "r", "ciwreword<Esc>", {buffer = 0})
+vim.keymap.set("n", "f", "ciwfixup<Esc>", {buffer = 0})
+vim.keymap.set("n", "<C-c><C-k>", "<cmd>:q!<cr>", {buffer = 0})

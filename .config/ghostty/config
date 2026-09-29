@@ -1,0 +1,36 @@
+# Theme — One Dark to match Zed
+theme = Atom One Dark
+
+# Font
+font-family = "FiraCode Nerd Font Mono"
+font-size = 18
+font-thicken = true
+# Ligatures on (FiraCode). Comment these out if you want plain glyphs.
+# font-feature = -calt
+# font-feature = -liga
+
+# Translucent + blurred window (the "Zed look")
+background-opacity = 0.85
+background-blur-radius = 20
+
+# Window chrome
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+macos-titlebar-style = transparent
+macos-option-as-alt = true
+window-save-state = always
+
+# Cursor
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
+
+# Terminfo: native xterm-ghostty (installed to ~/.terminfo).
+# If you SSH somewhere this entry is missing, prepend the env on that side or
+# use:  infocmp -x xterm-ghostty | ssh HOST -- tic -x -
+
+# Behavior
+copy-on-select = clipboard
+confirm-close-surface = false
+mouse-hide-while-typing = true
