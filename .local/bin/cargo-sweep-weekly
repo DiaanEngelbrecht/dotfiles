@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Delete cargo build files not used in N days (default 7) in every Rust project
+# under ~/repos. Scheduled weekly by install.sh (launchd on macOS, systemd user
+# timer on Linux); safe to run by hand, e.g. `cargo-sweep-weekly 3`.
+set -uo pipefail
+export PATH="$HOME/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+days="${1:-7}"
+echo "== $(date '+%F %T') sweeping ~/repos, unused for ${days}+ days"
+
+if ! command -v cargo-sweep >/dev/null; then
+  echo "cargo-sweep not installed: cargo install cargo-sweep"
+  exit 1
+fi
+
+echo "free before: $(df -h "$HOME" | awk 'NR==2 {print $4}')"
+cargo sweep --recursive --time "$days" "$HOME/repos"
+# Artifacts built by Rust toolchains that are no longer installed.
+cargo sweep --recursive --installed "$HOME/repos"
+echo "free after:  $(df -h "$HOME" | awk 'NR==2 {print $4}')"
