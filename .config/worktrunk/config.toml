@@ -1,0 +1,51 @@
+# Worktrunk user config (symlinked to ~/.config/worktrunk/config.toml).
+# Hooks: https://worktrunk.dev/hook/ — preview with `wt hook <type> --dry-run`,
+# background hook logs with `wt config state logs`.
+#
+# Model: one worktree = one tmux session (via sesh). tmux sessions are the
+# navigation, so wt doesn't also cd the shell you typed in.
+
+# Bare clones (~/repos/<name>.git) keep worktrees inside, named after the last
+# branch segment: feat/Something -> ~/repos/<name>.git/Something.
+# Normal clones keep worktrunk's default: ~/repos/<name>.feat-Something.
+worktree-path = "{% if repo[-4:] == '.git' %}{{ repo_path }}/{{ branch | basename }}{% else %}{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}{% endif %}"
+
+# Also consulted by the `wt switch` picker: remote-only branches show up in its
+# search, and picking one creates the local tracking branch + worktree.
+[list]
+remotes = true
+
+[switch]
+cd = false
+
+# New worktree setup. pre-start blocks, so Claude (started by the tmux session)
+# never sees a half-prepared worktree. Both commands run concurrently.
+[pre-start]
+# Clone gitignored files (target/, .env, ...) from the primary worktree. Only on
+# macOS: APFS reflinks make this free; on ext4 it would be a full copy.
+build-cache = '[ "$(uname)" != Darwin ] || wt step copy-ignored'
+# Untracked CLAUDE.md in the primary worktree? Symlink the same file in, so an
+# edit in any worktree applies to all. Skipped when the repo tracks CLAUDE.md.
+claude-md = '''
+f={{ primary_worktree_path }}/CLAUDE.md
+if [ -e "$f" ] && [ ! -e {{ worktree_path }}/CLAUDE.md ]; then
+  ln -s "$(realpath "$f")" {{ worktree_path }}/CLAUDE.md
+fi
+'''
+
+# claude-md handles CLAUDE.md; keep copy-ignored from racing it with a plain copy.
+[step.copy-ignored]
+exclude = ["CLAUDE.md"]
+
+# Jump to the worktree's tmux session, creating it (sesh.toml layout) if missing.
+[post-switch]
+session = "sesh connect {{ worktree_path }}"
+
+# Kill whatever tmux session is rooted at the removed worktree (matched by path,
+# so it also catches sessions you renamed).
+[post-remove]
+session = '''
+tmux list-sessions -F '#{session_path}|#{session_name}' 2>/dev/null |
+  awk -F'|' -v p={{ worktree_path }} '$1 == p { print $2 }' |
+  while IFS= read -r s; do tmux kill-session -t "=$s"; done
+'''

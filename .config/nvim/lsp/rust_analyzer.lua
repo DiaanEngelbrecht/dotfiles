@@ -12,6 +12,9 @@ return {
     ["rust-analyzer"] = {
       cargo = {
         features = "all",
+        buildScripts = {
+          enable = true,
+        },
       },
       check = {
         command = "clippy",
@@ -29,12 +32,6 @@ return {
         -- Make sure no macros are ignored. Map of crate -> [macro names];
         -- vim.empty_dict() forces JSON object encoding instead of an array.
         ignored = vim.empty_dict(),
-      },
-      cargo = {
-        features = "all",
-        buildScripts = {
-          enable = true,
-        },
       },
     },
   },

@@ -158,3 +158,15 @@ get-ubuntu-ami() {
 }
 
 alias format="cargo fmt && npm prettier --write ."
+
+# zoxide: frecent dirs (`z <name>`), also feeds the sesh picker
+if command -v zoxide >/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# Source local configurations if the file exists
+if [[ -f ~/.zshrc.local ]]; then
+    source ~/.zshrc.local
+fi
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

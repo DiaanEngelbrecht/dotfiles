@@ -30,6 +30,10 @@ install_prereqs() {
   if [ ! -f "$HOME/.asdf/asdf.sh" ]; then
     echo "note: asdf not installed (optional). To install: brew install asdf"
   fi
+
+  for tool in sesh zoxide wt cargo-sweep; do
+    command -v "$tool" >/dev/null || echo "note: $tool not installed (package: ${tool/wt/worktrunk})"
+  done
 }
 
 install_prereqs
@@ -68,6 +72,45 @@ link .p10k.zsh
 link .tmux.conf
 link .config/ghostty/config
 link .config/nvim
+link .config/sesh/sesh.toml
+link .config/worktrunk/config.toml
+link .cargo/config.toml
+link .local/bin/cargo-sweep-weekly
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Weekly cargo sweep of ~/repos: launchd on macOS, systemd user timer on Linux.
+# ──────────────────────────────────────────────────────────────────────────────
+
+schedule_cargo_sweep() {
+  local sweep="$HOME/.local/bin/cargo-sweep-weekly"
+
+  case "$(uname)" in
+    Darwin)
+      local label=local.cargo-sweep
+      local plist="$HOME/Library/LaunchAgents/$label.plist"
+      mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs"
+      sed "s|__HOME__|$HOME|g" "$DOTFILES/Library/LaunchAgents/$label.plist" > "$plist"
+      launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
+      launchctl bootstrap "gui/$(id -u)" "$plist"
+      echo "scheduled: weekly cargo sweep (launchd $label, log ~/Library/Logs/cargo-sweep.log)"
+      ;;
+    Linux)
+      if command -v systemctl >/dev/null && systemctl --user show-environment >/dev/null 2>&1; then
+        link .config/systemd/user/cargo-sweep.service
+        link .config/systemd/user/cargo-sweep.timer
+        systemctl --user daemon-reload
+        systemctl --user enable --now cargo-sweep.timer
+        echo "scheduled: weekly cargo sweep (systemd user timer, log: journalctl --user -u cargo-sweep)"
+        echo "note: user timers only run while logged in; to run always: sudo loginctl enable-linger $USER"
+      else
+        echo "note: no systemd user session; schedule the sweep with crontab -e:"
+        echo "  30 9 * * 1 $sweep >> $HOME/.cargo-sweep.log 2>&1"
+      fi
+      ;;
+  esac
+}
+
+schedule_cargo_sweep
 
 echo
 echo "Done. Remember:"

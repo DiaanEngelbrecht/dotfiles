@@ -83,6 +83,42 @@ vim.keymap.set("n", "<leader>lf", function()
 end, { desc = "Format File (LSP or Formatter.nvim)" })
 vim.keymap.set("n", "<leader>ls", "<cmd>:Mason<cr>")
 
+vim.keymap.set("n", "<leader>lt", function()
+  local clients = vim.lsp.get_clients({ name = "rust_analyzer", bufnr = 0 })
+  if #clients == 0 then
+    vim.notify("rust_analyzer is not attached to this buffer", vim.log.levels.WARN)
+    return
+  end
+
+  local out = vim.fn.system({ "rustup", "target", "list", "--installed" })
+  if vim.v.shell_error ~= 0 then
+    vim.notify("rustup failed: " .. out, vim.log.levels.ERROR)
+    return
+  end
+
+  local targets = { "<host default>" }
+  for line in out:gmatch("[^\r\n]+") do
+    if line ~= "" then table.insert(targets, line) end
+  end
+
+  vim.ui.select(targets, { prompt = "rust-analyzer target:" }, function(choice)
+    if not choice then return end
+    for _, client in ipairs(clients) do
+      local settings = client.config.settings or {}
+      settings["rust-analyzer"] = settings["rust-analyzer"] or {}
+      settings["rust-analyzer"].cargo = settings["rust-analyzer"].cargo or {}
+      if choice == "<host default>" then
+        settings["rust-analyzer"].cargo.target = vim.NIL
+      else
+        settings["rust-analyzer"].cargo.target = choice
+      end
+      client.config.settings = settings
+      client.notify("workspace/didChangeConfiguration", { settings = settings })
+    end
+    vim.notify("rust-analyzer target: " .. choice)
+  end)
+end, { desc = "Rust-analyzer: select target (in-memory)" })
+
 vim.keymap.set("n", "<leader>qq", function()
   if tree_api.tree.is_visible() then
     tree_api.tree.close()

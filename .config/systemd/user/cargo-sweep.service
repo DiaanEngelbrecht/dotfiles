@@ -1,0 +1,8 @@
+[Unit]
+Description=Delete stale cargo build files under ~/repos
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/cargo-sweep-weekly
+Nice=10
+IOSchedulingClass=idle

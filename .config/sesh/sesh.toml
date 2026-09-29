@@ -1,0 +1,39 @@
+#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
+# One tmux session per piece of work. Pick with <prefix> s, bounce back with <prefix> L.
+
+sort_order = ["tmux", "config", "zoxide"]
+
+# Worktrees of bare clones: ~/repos/<name>.git/<worktree> -> session "<name>/<worktree>"
+[[name_substitution]]
+find = '^~/repos/([^/]+)\.git/'
+replace = "$1/"
+regex = true
+
+[tui]
+show_windows = true
+preview = true
+
+[default_session]
+startup_command = "nvim"
+
+# Work-session layout for repos and worktrees: nvim | shell | claude | review
+[[wildcard]]
+pattern = "~/repos/*.git/*"
+startup_command = "nvim"
+windows = ["shell", "claude", "review"]
+
+[[wildcard]]
+pattern = "~/repos/*"
+startup_command = "nvim"
+windows = ["shell", "claude", "review"]
+
+[[window]]
+name = "shell"
+
+[[window]]
+name = "claude"
+startup_script = "claude"
+
+[[window]]
+name = "review"

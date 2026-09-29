@@ -1,0 +1,11 @@
+# Personal cargo config (symlinked to ~/.cargo/config.toml). Applies to every
+# project; a project's own .cargo/config.toml and Cargo.toml [profile] still layer on top.
+
+# Smaller dev builds: debuginfo is the bulk of target/debug/{deps,incremental}.
+# Backtraces keep file:line; stepping through code in lldb shows less.
+[profile.dev]
+debug = "line-tables-only"
+
+# Third-party crates: no debuginfo at all.
+[profile.dev.package."*"]
+debug = false

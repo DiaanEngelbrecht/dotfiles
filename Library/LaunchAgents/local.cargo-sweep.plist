@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Template: install.sh replaces __HOME__ and copies this to ~/Library/LaunchAgents
+     (launchd needs absolute paths and a real file, not a symlink). -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>local.cargo-sweep</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__HOME__/.local/bin/cargo-sweep-weekly</string>
+  </array>
+  <!-- Mondays 09:30; a run missed while asleep happens on wake. -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>9</integer>
+    <key>Minute</key>
+    <integer>30</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>__HOME__/Library/Logs/cargo-sweep.log</string>
+  <key>StandardErrorPath</key>
+  <string>__HOME__/Library/Logs/cargo-sweep.log</string>
+  <key>Nice</key>
+  <integer>10</integer>
+  <key>LowPriorityIO</key>
+  <true/>
+</dict>
+</plist>
