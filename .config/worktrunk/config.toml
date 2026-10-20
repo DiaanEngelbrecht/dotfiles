@@ -21,21 +21,31 @@ cd = false
 # New worktree setup. pre-start blocks, so Claude (started by the tmux session)
 # never sees a half-prepared worktree. Both commands run concurrently.
 [pre-start]
-# Clone gitignored files (target/, .env, ...) from the primary worktree. Only on
-# macOS: APFS reflinks make this free; on ext4 it would be a full copy.
+# Clone gitignored build output (target/, node_modules/, ...) from the primary
+# worktree. Only on macOS: APFS reflinks make this free; on ext4 it's a full copy.
 build-cache = '[ "$(uname)" != Darwin ] || wt step copy-ignored'
-# Untracked CLAUDE.md in the primary worktree? Symlink the same file in, so an
-# edit in any worktree applies to all. Skipped when the repo tracks CLAUDE.md.
-claude-md = '''
-f={{ primary_worktree_path }}/CLAUDE.md
-if [ -e "$f" ] && [ ! -e {{ worktree_path }}/CLAUDE.md ]; then
-  ln -s "$(realpath "$f")" {{ worktree_path }}/CLAUDE.md
+# Personal files (gitignored CLAUDE.md, .env, .envrc at any depth) in the
+# primary worktree: symlink the same file in, so an edit in any worktree applies
+# to all. Committed files are never touched; existing files are left alone.
+shared-files = '''
+cd {{ primary_worktree_path }} || exit 0
+git ls-files --others --ignored --exclude-standard --directory |
+  grep -E '(^|/)(CLAUDE\.md|\.env|\.envrc)$' |
+  while IFS= read -r f; do
+    dst={{ worktree_path }}/"$f"
+    if [ ! -e "$dst" ] && [ -d "$(dirname "$dst")" ]; then
+      ln -s "$(realpath "$f")" "$dst"
+    fi
+  done
+# direnv trusts .envrc per path, so approve the new worktree's copy.
+if command -v direnv >/dev/null && [ -e {{ worktree_path }}/.envrc ]; then
+  direnv allow {{ worktree_path }}
 fi
 '''
 
-# claude-md handles CLAUDE.md; keep copy-ignored from racing it with a plain copy.
+# shared-files symlinks these; keep copy-ignored from racing it with plain copies.
 [step.copy-ignored]
-exclude = ["CLAUDE.md"]
+exclude = ["CLAUDE.md", ".env", ".envrc"]
 
 # Jump to the worktree's tmux session, creating it (sesh.toml layout) if missing.
 [post-switch]

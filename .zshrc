@@ -170,3 +170,8 @@ if [[ -f ~/.zshrc.local ]]; then
 fi
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+# fzf: fuzzy Ctrl-R history search, Ctrl-T file picker, Alt-C cd
+if command -v fzf >/dev/null; then
+  source <(fzf --zsh)
+fi
