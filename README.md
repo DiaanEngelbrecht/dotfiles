@@ -1,7 +1,8 @@
 # dotfiles
 
 zsh (oh-my-zsh + powerlevel10k), tmux, Neovim, Ghostty, sesh and worktrunk,
-plus a weekly `cargo sweep` of `~/repos`.
+a Hyprland desktop (awww, Waybar, rofi) on Linux, plus a weekly `cargo sweep`
+of `~/repos`.
 
 `install.sh` symlinks everything into `$HOME` (existing files are backed up to
 `<path>.bak`), installs oh-my-zsh, powerlevel10k and TPM if missing, and
@@ -29,6 +30,18 @@ curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 Optional: `yay -S asdf-vm`.
+
+Desktop (Hyprland, Waybar, rofi; the configs are only linked on Linux):
+
+```sh
+sudo pacman -S --needed hyprland awww waybar rofi cliphist \
+  wl-clipboard grim slurp playerctl brightnessctl pavucontrol dolphin qt6ct \
+  ttf-jetbrains-mono-nerd
+```
+
+`hyprland.lua` targets an NVIDIA GPU and two specific Samsung monitors; adjust
+the monitor and env sections on other machines. Wallpapers (set with `awww img`)
+are not tracked.
 
 The cargo sweep runs as a systemd user timer, which only fires while you are
 logged in. To have it run regardless:

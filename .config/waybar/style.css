@@ -1,0 +1,136 @@
+/* -----------------------------------------------------------------------------
+ * Cyberpunk Glass & Neon HUD
+ * -------------------------------------------------------------------------- */
+@define-color bg        rgba(11, 15, 25, 0.78);
+@define-color fg        #c0caf5;
+@define-color fg-dim    #565f89;
+@define-color cyan      #33ccff;
+@define-color mint      #00ff99;
+@define-color amber     #e0af68;
+@define-color red       #ff2a6d;
+@define-color divider   rgba(51, 204, 255, 0.25);
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", monospace;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 0px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: @bg;
+    color: @fg;
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, @cyan, @mint) 1;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* -----------------------------------------------------------------------------
+ * Workspaces (Left)
+ * -------------------------------------------------------------------------- */
+#workspaces {
+    margin-left: 8px;
+}
+
+#workspaces button {
+    color: @fg-dim;
+    background: transparent;
+    padding: 0 10px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s ease;
+}
+
+#workspaces button.active {
+    color: @cyan;
+    border-bottom: 2px solid @cyan;
+    background-color: rgba(51, 204, 255, 0.08);
+}
+
+#workspaces button:hover {
+    color: @mint;
+    background-color: rgba(0, 255, 153, 0.08);
+}
+
+#workspaces button.urgent {
+    color: @red;
+    border-bottom: 2px solid @red;
+}
+
+/* -----------------------------------------------------------------------------
+ * Active Window & Center Clock
+ * -------------------------------------------------------------------------- */
+#window {
+    color: @fg;
+    padding-left: 10px;
+    opacity: 0.85;
+}
+
+#clock {
+    color: @cyan;
+    letter-spacing: 1px;
+    padding: 0 12px;
+}
+
+/* -----------------------------------------------------------------------------
+ * Telemetry Modules (Right)
+ * -------------------------------------------------------------------------- */
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#battery,
+#tray {
+    padding: 0 12px;
+    border-left: 1px solid @divider;
+    color: @fg;
+}
+
+#cpu {
+    border-left: none;
+    color: @cyan;
+}
+
+#memory {
+    color: @mint;
+}
+
+#network.disconnected {
+    color: @red;
+}
+
+#pulseaudio.muted {
+    color: @fg-dim;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @mint;
+}
+
+#battery.warning:not(.charging) {
+    color: @amber;
+}
+
+#battery.critical:not(.charging) {
+    color: @red;
+    animation-name: blink;
+    animation-duration: 0.6s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#tray {
+    margin-right: 6px;
+}
+
+@keyframes blink {
+    to {
+        background-color: @red;
+        color: #0b0f19;
+    }
+}

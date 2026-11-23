@@ -93,12 +93,12 @@ require("lazy").setup({
       'nvim-tree/nvim-web-devicons',
     },
   },
-  {
-    dir = "/Users/diaan/repos/buckety",
-    name = "buckety",
-    lazy = false,
-    dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim" },
-  },
+  -- {
+  --   dir = "/Users/diaan/repos/buckety",
+  --   name = "buckety",
+  --   lazy = false,
+  --   dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim" },
+  -- },
   {
   "yetone/avante.nvim",
   event = "VeryLazy",

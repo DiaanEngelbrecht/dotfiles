@@ -3,7 +3,7 @@ theme = Atom One Dark
 
 # Font
 font-family = "FiraCode Nerd Font Mono"
-font-size = 18
+font-size = 13
 font-thicken = true
 # Ligatures on (FiraCode). Comment these out if you want plain glyphs.
 # font-feature = -calt

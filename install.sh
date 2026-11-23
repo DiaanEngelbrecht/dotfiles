@@ -77,6 +77,14 @@ link .config/worktrunk/config.toml
 link .cargo/config.toml
 link .local/bin/cargo-sweep-weekly
 
+# Linux desktop: Hyprland, Waybar, rofi.
+if [ "$(uname)" = Linux ]; then
+  link .config/hypr/hyprland.lua
+  link .config/waybar/config.jsonc
+  link .config/waybar/style.css
+  link .config/rofi/tokyonight.rasi
+fi
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Weekly cargo sweep of ~/repos: launchd on macOS, systemd user timer on Linux.
 # ──────────────────────────────────────────────────────────────────────────────
